@@ -1,8 +1,11 @@
 name: ShareChat caveat analysis
 
 on:
+  issues:
+    types: [opened]
   pull_request:
     branches: [master]
+    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
 
 jobs:
@@ -13,6 +16,8 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: sharechat-caveat-analysis-20260827
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
