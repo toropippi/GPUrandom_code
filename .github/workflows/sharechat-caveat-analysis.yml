@@ -1,0 +1,32 @@
+name: ShareChat caveat analysis
+
+on:
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: python -m pip install --upgrade datasets scipy pyarrow requests
+      - name: Run full-corpus analysis
+        env:
+          HF_HUB_DISABLE_TELEMETRY: '1'
+        run: python analysis/run_sharechat_analysis.py
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sharechat-caveat-results
+          path: output/
+          if-no-files-found: error
+          retention-days: 7
